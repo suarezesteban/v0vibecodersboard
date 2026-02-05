@@ -114,7 +114,7 @@ export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard }: Vibe
                 onClick={() => setShowAllEndorsers(!showAllEndorsers)}
                 className="text-muted-foreground hover:text-foreground ml-1"
               >
-                {showAllEndorsers ? "[show less]" : " [view full list]"}
+                {showAllEndorsers ? "[see less]" : "[see more]"}
               </button>
             )}
           </div>
