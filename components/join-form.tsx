@@ -103,7 +103,7 @@ export function JoinForm({ existingProfile, isLoggedIn, existingCoupon }: JoinFo
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
       <div className="border border-border bg-background p-6 max-w-md w-full mx-4 text-center">
         <p className="text-foreground text-lg mb-2">welcome to the board!</p>
-        <p className="text-muted-foreground text-sm mb-4">here is your $10 v0 credit code:</p>
+        <p className="text-muted-foreground text-sm mb-4">a little gift so you can keep building:</p>
         <div className="bg-muted/30 border border-green-500/50 p-4 mb-4">
           <code className="text-green-500 text-xl font-bold select-all">{couponCode}</code>
         </div>
