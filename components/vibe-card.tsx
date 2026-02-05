@@ -4,7 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import type { Vibecoder } from "@/lib/types"
 import { endorseVibecoder, removeEndorsement } from "@/lib/actions"
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 
 interface VibeCardProps {
   vibecoder: Vibecoder
@@ -15,6 +15,7 @@ interface VibeCardProps {
 
 export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard }: VibeCardProps) {
   const [isPending, startTransition] = useTransition()
+  const [showAllEndorsers, setShowAllEndorsers] = useState(false)
 
   const handleEndorse = () => {
     if (!isLoggedIn) {
@@ -95,7 +96,7 @@ export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard }: Vibe
         <div className="pt-4 mt-4 border-t border-dashed border-border/50">
           <div className="text-sm">
             <span className="text-muted-foreground">endorsed by: </span>
-            {endorsers.slice(0, 3).map((e, i) => (
+            {(showAllEndorsers ? endorsers : endorsers.slice(0, 3)).map((e, i, arr) => (
               <span key={e.handle}>
                 <Link
                   href={`https://x.com/${e.handle}`}
@@ -105,12 +106,17 @@ export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard }: Vibe
                 >
                   @{e.handle}
                 </Link>
-                {i < Math.min(endorsers.length, 3) - 1 && ", "}
-                {endorsers.length > 3 && i === 2 && (
-                  <span className="text-muted-foreground"> [view full list]</span>
-                )}
+                {i < arr.length - 1 && ", "}
               </span>
             ))}
+            {endorsers.length > 3 && (
+              <button
+                onClick={() => setShowAllEndorsers(!showAllEndorsers)}
+                className="text-muted-foreground hover:text-foreground ml-1"
+              >
+                {showAllEndorsers ? "[show less]" : " [view full list]"}
+              </button>
+            )}
           </div>
         </div>
       )}
