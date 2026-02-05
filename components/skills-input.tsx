@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
-import useSWR from "swr"
 
 interface SkillSuggestion {
   skill: string
@@ -14,21 +13,32 @@ interface SkillsInputProps {
   placeholder?: string
 }
 
-const fetcher = (url: string) => fetch(url).then(res => res.json())
-
 export function SkillsInput({ name, defaultValue = "", placeholder }: SkillsInputProps) {
   const [inputValue, setInputValue] = useState(defaultValue)
   const [isOpen, setIsOpen] = useState(false)
   const [currentQuery, setCurrentQuery] = useState("")
+  const [suggestions, setSuggestions] = useState<SkillSuggestion[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   
   // Fetch suggestions based on current query
-  const { data: suggestions = [] } = useSWR<SkillSuggestion[]>(
-    isOpen ? `/api/skills?q=${encodeURIComponent(currentQuery)}` : null,
-    fetcher,
-    { revalidateOnFocus: false }
-  )
+  useEffect(() => {
+    if (!isOpen) {
+      setSuggestions([])
+      return
+    }
+    
+    const controller = new AbortController()
+    
+    fetch(`/api/skills?q=${encodeURIComponent(currentQuery)}`, {
+      signal: controller.signal
+    })
+      .then(res => res.json())
+      .then(data => setSuggestions(data))
+      .catch(() => {}) // Ignore abort errors
+    
+    return () => controller.abort()
+  }, [isOpen, currentQuery])
   
   // Get the current skill being typed (after the last comma)
   const getCurrentSkill = useCallback(() => {
