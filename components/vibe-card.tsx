@@ -107,7 +107,7 @@ export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard }: Vibe
                 </Link>
                 {i < Math.min(endorsers.length, 3) - 1 && ", "}
                 {endorsers.length > 3 && i === 2 && (
-                  <span className="text-muted-foreground"> +{endorsers.length - 3} more</span>
+                  <span className="text-muted-foreground"> [view full list]</span>
                 )}
               </span>
             ))}
