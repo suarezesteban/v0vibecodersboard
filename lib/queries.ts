@@ -83,3 +83,29 @@ export async function getVibecoderCoupon(vibecoder_id: number): Promise<string |
   `
   return result.length > 0 ? result[0].code : null
 }
+
+// Get unique skills from all vibecoders, ordered by usage frequency
+export async function getUniqueSkills(): Promise<{ skill: string; count: number }[]> {
+  const result = await sql`
+    SELECT 
+      TRIM(LOWER(skill)) as skill_normalized,
+      TRIM(skill) as skill,
+      COUNT(*) as count
+    FROM vibecoders, unnest(string_to_array(stack, ',')) as skill
+    WHERE stack IS NOT NULL AND TRIM(skill) != ''
+    GROUP BY TRIM(LOWER(skill)), TRIM(skill)
+    ORDER BY count DESC, skill ASC
+  `
+  
+  // Dedupe by normalized name, keeping the most common casing
+  const seen = new Map<string, { skill: string; count: number }>()
+  for (const row of result) {
+    const normalized = row.skill_normalized as string
+    const existing = seen.get(normalized)
+    if (!existing || (row.count as number) > existing.count) {
+      seen.set(normalized, { skill: row.skill as string, count: row.count as number })
+    }
+  }
+  
+  return Array.from(seen.values()).sort((a, b) => b.count - a.count)
+}
