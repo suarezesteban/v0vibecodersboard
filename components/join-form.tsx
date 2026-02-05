@@ -3,6 +3,7 @@
 import { joinBoard, leaveBoard } from "@/lib/actions"
 import { useTransition, useState } from "react"
 import type { Vibecoder } from "@/lib/types"
+import { SkillsInput } from "./skills-input"
 
 interface JoinFormProps {
   existingProfile?: Vibecoder | null
@@ -58,11 +59,10 @@ export function JoinForm({ existingProfile, isLoggedIn, existingCoupon }: JoinFo
       </div>
       <div>
         <label className="text-xs text-muted-foreground block mb-1">skills</label>
-        <input
+        <SkillsInput
           name="stack"
           defaultValue={existingProfile?.stack || ""}
           placeholder="v0, AI Gateway, AI SDK, Supabase"
-          className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground focus:outline-none focus:border-foreground"
         />
       </div>
       
