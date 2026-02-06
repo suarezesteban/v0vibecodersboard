@@ -5,6 +5,7 @@ import { VibeCard } from "./vibe-card"
 import type { Vibecoder } from "@/lib/types"
 
 type SortOption = "default" | "endorsed" | "recent"
+type ViewOption = "grid" | "compact" | "list"
 
 // Calculate profile completeness (bio + skills + projects = 3 max)
 function getCompletenessScore(v: Vibecoder): number {
@@ -30,6 +31,7 @@ export function VibecodersList({
 }: VibecordersListProps) {
   const [query, setQuery] = useState("")
   const [sort, setSort] = useState<SortOption>("default")
+  const [view, setView] = useState<ViewOption>("list")
 
   const filteredVibecoders = useMemo(() => {
     let result = vibecoders
@@ -103,7 +105,52 @@ export function VibecodersList({
           </button>
         </div>
         <div className="flex-1" />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 text-xs">
+            <button
+              type="button"
+              onClick={() => setView("grid")}
+              className={view === "grid" ? "text-foreground" : "text-muted-foreground hover:text-foreground"}
+              title="Grid view"
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={() => setView("compact")}
+              className={view === "compact" ? "text-foreground" : "text-muted-foreground hover:text-foreground"}
+              title="Compact view"
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1" y="1" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="6" y="1" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="11" y="1" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="1" y="6" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="6" y="6" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="11" y="6" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="1" y="11" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="6" y="11" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="11" y="11" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={() => setView("list")}
+              className={view === "list" ? "text-foreground" : "text-muted-foreground hover:text-foreground"}
+              title="List view"
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1" y="2" width="14" height="3" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="1" y="7" width="14" height="3" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="1" y="12" width="14" height="3" rx="1" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+            </button>
+          </div>
           <input
             type="text"
             value={query}
@@ -128,7 +175,13 @@ export function VibecodersList({
           {query.trim() ? "no vibecoders match your search." : "no vibecoders yet. be the first to join."}
         </p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className={
+          view === "grid" 
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" 
+            : view === "compact"
+            ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"
+            : "grid grid-cols-1 gap-2"
+        }>
           {filteredVibecoders.map((vibecoder) => (
             <VibeCard
               key={vibecoder.id}
@@ -136,6 +189,7 @@ export function VibecodersList({
               isLoggedIn={isLoggedIn}
               hasEndorsed={endorsementStatus[vibecoder.id] || false}
               isOwnCard={currentUserId === vibecoder.user_id}
+              variant={view}
             />
           ))}
         </div>
