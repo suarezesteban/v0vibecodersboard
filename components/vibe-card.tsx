@@ -11,9 +11,10 @@ interface VibeCardProps {
   isLoggedIn: boolean
   hasEndorsed: boolean
   isOwnCard: boolean
+  variant?: "grid" | "compact" | "list"
 }
 
-export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard }: VibeCardProps) {
+export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard, variant = "grid" }: VibeCardProps) {
   const [isPending, startTransition] = useTransition()
   const [showAllEndorsers, setShowAllEndorsers] = useState(false)
 
@@ -33,6 +34,99 @@ export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard }: Vibe
 
   const endorsers = vibecoder.endorsers || []
 
+  const endorseButton = !isOwnCard ? (
+    <button
+      onClick={handleEndorse}
+      disabled={isPending}
+      className={`text-xs transition-colors ${
+        hasEndorsed 
+          ? 'text-green-500 hover:text-red-500' 
+          : 'text-muted-foreground hover:text-foreground'
+      }`}
+    >
+      {isPending ? '...' : hasEndorsed ? '[endorsed]' : '[endorse]'}
+    </button>
+  ) : (
+    <span className="text-xs text-muted-foreground">[you]</span>
+  )
+
+  // -- LIST variant: single horizontal row --
+  if (variant === "list") {
+    return (
+      <div className="border border-border px-4 py-3 flex items-center gap-4">
+        {vibecoder.twitter_avatar ? (
+          <Image
+            src={vibecoder.twitter_avatar || "/placeholder.svg"}
+            alt={vibecoder.twitter_handle || ""}
+            width={32}
+            height={32}
+            className="rounded-full shrink-0"
+          />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-muted shrink-0" />
+        )}
+        <Link 
+          href={`https://x.com/${vibecoder.twitter_handle}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-foreground text-sm font-medium hover:underline shrink-0 w-36 truncate"
+        >
+          @{vibecoder.twitter_handle}
+        </Link>
+        <span className="text-muted-foreground text-xs truncate hidden sm:inline flex-1">
+          {vibecoder.stack || "-"}
+        </span>
+        <span className="text-muted-foreground text-xs shrink-0 hidden md:inline">
+          {vibecoder.endorsement_count || 0} endorsed
+        </span>
+        {endorseButton}
+      </div>
+    )
+  }
+
+  // -- COMPACT variant: smaller card, less detail --
+  if (variant === "compact") {
+    return (
+      <div className="border border-border p-3 flex flex-col h-full">
+        <div className="flex items-center gap-2 pb-2">
+          {vibecoder.twitter_avatar ? (
+            <Image
+              src={vibecoder.twitter_avatar || "/placeholder.svg"}
+              alt={vibecoder.twitter_handle || ""}
+              width={28}
+              height={28}
+              className="rounded-full"
+            />
+          ) : (
+            <div className="w-7 h-7 rounded-full bg-muted" />
+          )}
+          <Link 
+            href={`https://x.com/${vibecoder.twitter_handle}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-foreground text-sm font-medium hover:underline truncate"
+          >
+            @{vibecoder.twitter_handle}
+          </Link>
+        </div>
+        <div className="flex-1 space-y-1">
+          <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2">
+            {vibecoder.bio || ""}
+          </p>
+          <div className="text-xs">
+            <span className="text-muted-foreground">skills: </span>
+            <span className="text-foreground line-clamp-1">{vibecoder.stack || "-"}</span>
+          </div>
+        </div>
+        <div className="pt-2 mt-2 border-t border-border flex items-center justify-between">
+          <span className="text-xs text-muted-foreground">{vibecoder.endorsement_count || 0} endorsed</span>
+          {endorseButton}
+        </div>
+      </div>
+    )
+  }
+
+  // -- GRID variant (default): full card --
   return (
     <div className="border border-border p-5 flex flex-col h-full">
       {/* Header with avatar and handle */}
@@ -61,7 +155,7 @@ export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard }: Vibe
       {/* Content */}
       <div className="flex-1 space-y-2">
         {vibecoder.bio && (
-          <p className="text-muted-foreground text-sm leading-relaxed">"{vibecoder.bio}"</p>
+          <p className="text-muted-foreground text-sm leading-relaxed">{'"'}{vibecoder.bio}{'"'}</p>
         )}
         
         <div className="text-sm">
@@ -131,21 +225,7 @@ export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard }: Vibe
         >
           [x profile]
         </Link>
-        {!isOwnCard ? (
-          <button
-            onClick={handleEndorse}
-            disabled={isPending}
-            className={`text-xs transition-colors ${
-              hasEndorsed 
-                ? 'text-green-500 hover:text-red-500' 
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {isPending ? '...' : hasEndorsed ? '[endorsed]' : '[endorse]'}
-          </button>
-        ) : (
-          <span className="text-xs text-muted-foreground">[you]</span>
-        )}
+        {endorseButton}
       </div>
     </div>
   )
