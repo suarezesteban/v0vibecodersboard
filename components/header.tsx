@@ -34,7 +34,7 @@ export function Header({ user }: HeaderProps) {
               onClick={() => setShowModal(true)}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              [?]
+              [what is this?]
             </button>
             {user ? (
               <>
@@ -83,7 +83,7 @@ export function Header({ user }: HeaderProps) {
             </div>
             <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
               <p>
-                people keep asking me: {'"'}do you know any vibecoders I could hire?{'"'} and vibecoders keep asking me: {'"'}how do I find clients?{'"'}
+                people keep asking me: {'"'}do you know any vibecoders I could hire?{'"'}
               </p>
               <p>
                 so I built <span className="text-foreground">vibecoders.board</span> -- an open directory to connect vibecoders looking to get hired with people looking to hire them.
