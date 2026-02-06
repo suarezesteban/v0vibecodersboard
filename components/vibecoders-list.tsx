@@ -182,15 +182,20 @@ export function VibecodersList({
             ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"
             : "grid grid-cols-1 gap-2"
         }>
-          {filteredVibecoders.map((vibecoder) => (
-            <VibeCard
+          {filteredVibecoders.map((vibecoder, index) => (
+            <div
               key={vibecoder.id}
-              vibecoder={vibecoder}
-              isLoggedIn={isLoggedIn}
-              hasEndorsed={endorsementStatus[vibecoder.id] || false}
-              isOwnCard={currentUserId === vibecoder.user_id}
-              variant={view}
-            />
+              className="animate-fade-in-up opacity-0"
+              style={{ animationDelay: `${index * 60}ms`, animationFillMode: "forwards" }}
+            >
+              <VibeCard
+                vibecoder={vibecoder}
+                isLoggedIn={isLoggedIn}
+                hasEndorsed={endorsementStatus[vibecoder.id] || false}
+                isOwnCard={currentUserId === vibecoder.user_id}
+                variant={view}
+              />
+            </div>
           ))}
         </div>
       )}
