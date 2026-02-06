@@ -31,7 +31,7 @@ export function VibecodersList({
 }: VibecordersListProps) {
   const [query, setQuery] = useState("")
   const [sort, setSort] = useState<SortOption>("default")
-  const [view, setView] = useState<ViewOption>("grid")
+  const [view, setView] = useState<ViewOption>("list")
 
   const filteredVibecoders = useMemo(() => {
     let result = vibecoders
