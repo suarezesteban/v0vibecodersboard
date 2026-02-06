@@ -83,13 +83,13 @@ export function Header({ user }: HeaderProps) {
             </div>
             <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
               <p>
-                I get asked all the time: {'"'}do you know any vibecoders you{"'"}d recommend?{'"'}
+                people keep asking me: {'"'}do you know any vibecoders I could hire?{'"'} and vibecoders keep asking me: {'"'}how do I find clients?{'"'}
               </p>
               <p>
-                so I built <span className="text-foreground">vibecoders.board</span> -- a directory for the vibecoding community.
+                so I built <span className="text-foreground">vibecoders.board</span> -- an open directory to connect vibecoders looking to get hired with people looking to hire them.
               </p>
               <p>
-                join the board, show what you{"'"}ve built, get endorsements.
+                if you{"'"}re a vibecoder, join the board, show what you{"'"}ve built, and get endorsed by others. if you{"'"}re looking to hire, browse the board and find the right person for your project.
               </p>
             </div>
             <div className="pt-2 text-xs text-muted-foreground">
