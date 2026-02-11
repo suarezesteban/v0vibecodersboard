@@ -38,8 +38,6 @@ export async function GET(request: Request) {
   })
 
   if (!tokenResponse.ok) {
-    const errorText = await tokenResponse.text()
-    console.log("[v0] Token exchange failed:", errorText)
     return NextResponse.redirect(`${baseUrl}/?error=token_exchange_failed`)
   }
 
@@ -97,8 +95,6 @@ export async function GET(request: Request) {
     path: "/",
     maxAge: 60 * 60 * 24 * 30, // 30 days
   })
-
-  console.log("[v0] Session created for user:", twitterUser.username, "id:", twitterUser.id)
 
   return response
 }

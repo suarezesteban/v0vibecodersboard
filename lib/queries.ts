@@ -56,7 +56,7 @@ export async function getUserEndorsements(endorserId: string): Promise<number[]>
   const result = await sql`
     SELECT vibecoder_id FROM endorsements WHERE endorser_id = ${endorserId}
   `
-  return result.map((r: { vibecoder_id: number }) => r.vibecoder_id)
+  return result.map((r) => r.vibecoder_id as number)
 }
 
 // Assign a coupon to a vibecoder (called when they join)
