@@ -5,22 +5,56 @@ import { sql } from "./db"
 import { getSession } from "./auth"
 import { assignCoupon } from "./queries"
 
+const MAX_BIO_LENGTH = 500
+const MAX_STACK_LENGTH = 200
+const MAX_PROJECT_NAME_LENGTH = 100
+const MAX_PROJECT_URL_LENGTH = 500
+const MAX_PROJECTS = 5
+
+function isValidUrl(str: string): boolean {
+  try {
+    const url = new URL(str)
+    return url.protocol === "http:" || url.protocol === "https:"
+  } catch {
+    return false
+  }
+}
+
 export async function joinBoard(formData: FormData) {
   const session = await getSession()
   if (!session) {
     return { error: "Not authenticated" }
   }
 
-  const bio = formData.get("bio") as string
-  const stack = formData.get("stack") as string
-  
-  // Parse projects from individual fields
+  const bio = (formData.get("bio") as string)?.trim() ?? ""
+  const stack = (formData.get("stack") as string)?.trim() ?? ""
+
+  // Validate bio length
+  if (bio.length > MAX_BIO_LENGTH) {
+    return { error: `Bio must be ${MAX_BIO_LENGTH} characters or fewer` }
+  }
+
+  // Validate stack length
+  if (stack.length > MAX_STACK_LENGTH) {
+    return { error: `Stack must be ${MAX_STACK_LENGTH} characters or fewer` }
+  }
+
+  // Parse and validate projects
   const projects = []
-  for (let i = 0; i < 5; i++) {
-    const name = formData.get(`project_name_${i}`) as string
-    const url = formData.get(`project_url_${i}`) as string
-    if (name?.trim() && url?.trim()) {
-      projects.push({ name: name.trim(), url: url.trim() })
+  for (let i = 0; i < MAX_PROJECTS; i++) {
+    const name = (formData.get(`project_name_${i}`) as string)?.trim()
+    const url = (formData.get(`project_url_${i}`) as string)?.trim()
+    if (name && url) {
+      if (name.length > MAX_PROJECT_NAME_LENGTH) {
+        return { error: `Project name must be ${MAX_PROJECT_NAME_LENGTH} characters or fewer` }
+      }
+      if (url.length > MAX_PROJECT_URL_LENGTH) {
+        return { error: `Project URL must be ${MAX_PROJECT_URL_LENGTH} characters or fewer` }
+      }
+      if (!isValidUrl(url)) {
+        return { error: `"${name}" has an invalid URL. Please use a full URL starting with http:// or https://` }
+      }
+      projects.push({ name, url })
     }
   }
 
@@ -49,30 +83,32 @@ export async function joinBoard(formData: FormData) {
 }
 
 export async function endorseVibecoder(vibecoder_id: number) {
-  console.log("[v0] endorseVibecoder called with:", vibecoder_id)
+  if (!Number.isInteger(vibecoder_id) || vibecoder_id <= 0) {
+    return { error: "Invalid vibecoder ID" }
+  }
+
   const session = await getSession()
-  console.log("[v0] session:", session)
   if (!session) {
-    console.log("[v0] No session, returning error")
     return { error: "Not authenticated" }
   }
 
   try {
-    console.log("[v0] Inserting endorsement:", session.id, vibecoder_id)
     await sql`
       INSERT INTO endorsements (endorser_id, vibecoder_id)
       VALUES (${session.id}, ${vibecoder_id})
     `
-    console.log("[v0] Endorsement inserted successfully")
     revalidatePath("/")
     return { success: true }
-  } catch (e) {
-    console.log("[v0] Error inserting endorsement:", e)
+  } catch {
     return { error: "Already endorsed" }
   }
 }
 
 export async function removeEndorsement(vibecoder_id: number) {
+  if (!Number.isInteger(vibecoder_id) || vibecoder_id <= 0) {
+    return { error: "Invalid vibecoder ID" }
+  }
+
   const session = await getSession()
   if (!session) {
     return { error: "Not authenticated" }
