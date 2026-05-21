@@ -1,10 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
 import type { Vibecoder } from "@/lib/types"
 import { endorseVibecoder, removeEndorsement } from "@/lib/actions"
 import { useState, useTransition } from "react"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 interface VibeCardProps {
   vibecoder: Vibecoder
@@ -55,17 +55,10 @@ export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard, varian
     return (
       <div className="border border-border px-4 py-4">
         <div className="flex items-start gap-3">
-          {vibecoder.twitter_avatar ? (
-            <Image
-              src={vibecoder.twitter_avatar || "/placeholder.svg"}
-              alt={vibecoder.twitter_handle || ""}
-              width={36}
-              height={36}
-              className="rounded-full shrink-0 mt-0.5"
-            />
-          ) : (
-            <div className="w-9 h-9 rounded-full bg-muted shrink-0 mt-0.5" />
-          )}
+                    <Avatar className="w-9 h-9 shrink-0 mt-0.5">
+            <AvatarImage src={vibecoder.twitter_avatar || ""} alt={vibecoder.twitter_handle || ""} />
+            <AvatarFallback>{vibecoder.twitter_handle?.charAt(0).toUpperCase()}</AvatarFallback>
+          </Avatar>
           <div className="flex-1 min-w-0 space-y-1">
             <div className="flex items-center justify-between gap-2">
               <Link 
@@ -156,17 +149,10 @@ export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard, varian
     return (
       <div className="border border-border p-3 flex flex-col h-full">
         <div className="flex items-center gap-2 pb-2">
-          {vibecoder.twitter_avatar ? (
-            <Image
-              src={vibecoder.twitter_avatar || "/placeholder.svg"}
-              alt={vibecoder.twitter_handle || ""}
-              width={28}
-              height={28}
-              className="rounded-full"
-            />
-          ) : (
-            <div className="w-7 h-7 rounded-full bg-muted" />
-          )}
+          <Avatar className="w-7 h-7">
+            <AvatarImage src={vibecoder.twitter_avatar || ""} alt={vibecoder.twitter_handle || ""} />
+            <AvatarFallback className="text-xs">{vibecoder.twitter_handle?.charAt(0).toUpperCase()}</AvatarFallback>
+          </Avatar>
           <Link 
             href={`https://x.com/${vibecoder.twitter_handle}`}
             target="_blank"
@@ -255,17 +241,10 @@ export function VibeCard({ vibecoder, isLoggedIn, hasEndorsed, isOwnCard, varian
     <div className="border border-border p-5 flex flex-col h-full">
       {/* Header with avatar and handle */}
       <div className="flex items-center gap-3 pb-3">
-        {vibecoder.twitter_avatar ? (
-          <Image
-            src={vibecoder.twitter_avatar || "/placeholder.svg"}
-            alt={vibecoder.twitter_handle || ""}
-            width={44}
-            height={44}
-            className="rounded-full"
-          />
-        ) : (
-          <div className="w-11 h-11 rounded-full bg-muted" />
-        )}
+        <Avatar className="w-11 h-11">
+          <AvatarImage src={vibecoder.twitter_avatar || ""} alt={vibecoder.twitter_handle || ""} />
+          <AvatarFallback>{vibecoder.twitter_handle?.charAt(0).toUpperCase()}</AvatarFallback>
+        </Avatar>
         <Link 
           href={`https://x.com/${vibecoder.twitter_handle}`}
           target="_blank"
